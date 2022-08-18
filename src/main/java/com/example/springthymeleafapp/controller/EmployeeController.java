@@ -4,6 +4,8 @@ import com.example.springthymeleafapp.entity.Employee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import com.example.springthymeleafapp.repository.EmployeeRepository;
 
@@ -15,12 +17,27 @@ public class EmployeeController {
     @Autowired
     private EmployeeRepository eRepo; // DB methods
 
-    @GetMapping("/")//({"/showEmployees", "/", "/list"})
+    @GetMapping({"/showEmployees", "/", "/list"})
     public ModelAndView showEmployees(){ // Handler method
         ModelAndView mav = new ModelAndView("list-employees");
         List<Employee> list = eRepo.findAll();
         mav.addObject("employees", list); // transmit list of employees
 
         return mav;
+    }
+
+    @GetMapping("/addEmployeeForm")
+    public ModelAndView addEmployeeForm(){
+        ModelAndView mav = new ModelAndView("add-employee-form");
+        Employee newEmployee = new Employee();
+        mav.addObject("employee", newEmployee);
+
+        return mav;
+    }
+
+    @PostMapping("/saveEmployee")
+    public String saveEmployee(@ModelAttribute Employee employee){
+        eRepo.save(employee);
+        return "redirect:/list";
     }
 }
